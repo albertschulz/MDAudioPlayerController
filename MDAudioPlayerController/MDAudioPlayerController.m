@@ -8,6 +8,8 @@
 
 #import "MDAudioPlayerController.h"
 #import "MDAudioPlayerTableViewCell.h"
+#import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface MDAudioPlayerController ()
 {
@@ -119,6 +121,26 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	else	
 		nextButton.enabled = [self canGoToNextTrack];
 	previousButton.enabled = [self canGoToPreviousTrack];
+    
+    NSArray *keys = [NSArray arrayWithObjects:
+                     MPMediaItemPropertyTitle,
+                     MPMediaItemPropertyArtist,
+                     MPMediaItemPropertyPlaybackDuration,
+                     MPNowPlayingInfoPropertyPlaybackRate,
+                     nil];
+    
+    NSString *title = @"";
+    NSString *artist = @"";
+    
+    if (self.titleLabel.text) title = self.titleLabel.text;
+    if (self.artistLabel.text) artist = self.artistLabel.text;
+    
+    NSArray *values = @[title,
+                        artist,
+                        @(p.duration),
+                        @1];
+    NSDictionary *mediaInfo = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:mediaInfo];
 }
 
 -(void)updateViewForPlayerInfo:(AVAudioPlayer*)p
@@ -346,12 +368,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	[self updateViewForPlayerInfo:player];
 	[self updateViewForPlayerState:player];
-    
 }
 
 - (void)dismissAudioPlayer
 {
-	[player stop];
+//	[player stop];
     if ([self respondsToSelector:@selector(presentingViewController)]){
         [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     }
@@ -635,7 +656,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	selectedIndex = newIndex;
 		
 	NSError *error = nil;
+    
 	AVAudioPlayer *newAudioPlayer =[[AVAudioPlayer alloc] initWithContentsOfURL:[(MDAudioFile *)[soundFiles objectAtIndex:selectedIndex] filePath] error:&error];
+    
 		
 	if (error)
 		NSLog(@"%@", error);
@@ -734,11 +757,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	// remove the interruption key. it won't be needed
 	[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Interruption"];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
 }
 
 #pragma mark Table view methods
@@ -909,6 +927,11 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
 - (void)viewDidUnload
 {
 	self.reflectionView = nil;
+}
+
+- (void)dealloc
+{
+    
 }
 
 @end

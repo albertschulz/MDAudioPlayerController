@@ -113,9 +113,9 @@ static UIFont *textFont = nil;
 	
 	[textColor set];
 	
-	[title drawInRect:CGRectMake(75, 12, 185, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
+	[title drawInRect:CGRectMake(75, 12, 180, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
 	[number drawInRect:CGRectMake(5, 12, 35, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
-	[duration drawInRect:CGRectMake(270, 12, 45, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
+	[duration drawInRect:CGRectMake(255, 12, 55, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
 	
 	[dividerColor set];
 	
