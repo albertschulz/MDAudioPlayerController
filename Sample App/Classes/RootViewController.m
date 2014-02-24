@@ -24,7 +24,6 @@
 	fileArray = [[NSMutableArray alloc] initWithObjects:[[NSBundle mainBundle] pathForResource:@"1" ofType:@"mp3"],
 				 [[NSBundle mainBundle] pathForResource:@"2" ofType:@"mp3"],
 				 [[NSBundle mainBundle] pathForResource:@"3" ofType:@"mp3"], nil];
-    fileArray = [fileArray arrayByAddingObjectsFromArray:fileArray];
 	
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
@@ -129,6 +128,8 @@
 		MDAudioFile *audioFile = [[MDAudioFile alloc] initWithPath:[NSURL fileURLWithPath:song]];
 		[songs addObject:audioFile];
 	}
+    
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 	
 	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row];
 	[self presentViewController:audioPlayer animated:YES completion:nil];
