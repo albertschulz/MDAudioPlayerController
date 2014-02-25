@@ -269,6 +269,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    artworkView.contentMode = UIViewContentModeScaleAspectFill;
 	[artworkView setImage:[selectedSong coverImage] forState:UIControlStateNormal];
 	[artworkView addTarget:self action:@selector(showOverlayView) forControlEvents:UIControlEventTouchUpInside];
 	artworkView.showsTouchWhenHighlighted = NO;
@@ -332,13 +333,18 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:previousButton];
 	
 	self.volumeSlider = [[UISlider alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - (IS_OS_7_OR_LATER?32:47), 270, 9)];
-	[volumeSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerVolumeKnob" ofType:@"png"]]
-														forState:UIControlStateNormal];
-	[volumeSlider setMinimumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberLeft" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
-					   forState:UIControlStateNormal];
-	[volumeSlider setMaximumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberRight" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
-							  forState:UIControlStateNormal];
-	[volumeSlider addTarget:self action:@selector(volumeSliderMoved:) forControlEvents:UIControlEventValueChanged];
+	
+    if (!IS_OS_7_OR_LATER) {
+        [volumeSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerVolumeKnob" ofType:@"png"]]
+                           forState:UIControlStateNormal];
+        [volumeSlider setMinimumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberLeft" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
+                                  forState:UIControlStateNormal];
+        [volumeSlider setMaximumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberRight" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
+                                  forState:UIControlStateNormal];
+
+    }
+	
+    [volumeSlider addTarget:self action:@selector(volumeSliderMoved:) forControlEvents:UIControlEventValueChanged];
 	
 	if ([[NSUserDefaults standardUserDefaults] floatForKey:@"PlayerVolume"])
 		volumeSlider.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"PlayerVolume"];
@@ -436,13 +442,18 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		overlayView.opaque = NO;
 		
 		self.progressSlider = [[UISlider alloc] initWithFrame:CGRectMake(54, 20, 212, 23)];
-		[progressSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberKnob" ofType:@"png"]]
-						   forState:UIControlStateNormal];
-		[progressSlider setMinimumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberLeft" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
-								  forState:UIControlStateNormal];
-		[progressSlider setMaximumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberRight" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
-								  forState:UIControlStateNormal];
-		[progressSlider addTarget:self action:@selector(progressSliderMoved:) forControlEvents:UIControlEventValueChanged];
+
+        if (!IS_OS_7_OR_LATER) {
+            [progressSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberKnob" ofType:@"png"]]
+                                 forState:UIControlStateNormal];
+            [progressSlider setMinimumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberLeft" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
+                                        forState:UIControlStateNormal];
+            [progressSlider setMaximumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberRight" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
+                                        forState:UIControlStateNormal];
+
+        }
+		
+        [progressSlider addTarget:self action:@selector(progressSliderMoved:) forControlEvents:UIControlEventValueChanged];
 		progressSlider.maximumValue = player.duration;
 		progressSlider.minimumValue = 0.0;	
 		[overlayView addSubview:progressSlider];
