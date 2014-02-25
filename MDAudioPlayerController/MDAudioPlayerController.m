@@ -269,8 +269,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-    artworkView.contentMode = UIViewContentModeScaleAspectFill;
 	[artworkView setImage:[selectedSong coverImage] forState:UIControlStateNormal];
+    self.artworkView.imageView.contentMode = UIViewContentModeScaleAspectFill;
 	[artworkView addTarget:self action:@selector(showOverlayView) forControlEvents:UIControlEventTouchUpInside];
 	artworkView.showsTouchWhenHighlighted = NO;
 	artworkView.adjustsImageWhenHighlighted = NO;
@@ -488,13 +488,13 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		currentTime.adjustsFontSizeToFitWidth = YES;
 		
 		self.repeatButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 45, 32, 28)];
-		[repeatButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerRepeatOff" ofType:@"png"]] 
+		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOff"]
 					  forState:UIControlStateNormal];
 		[repeatButton addTarget:self action:@selector(toggleRepeat) forControlEvents:UIControlEventTouchUpInside];
 		[overlayView addSubview:repeatButton];
 		
 		self.shuffleButton = [[UIButton alloc] initWithFrame:CGRectMake(280, 45, 32, 28)];
-		[shuffleButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerShuffleOff" ofType:@"png"]] 
+		[shuffleButton setImage:[UIImage imageNamed:@"_AudioPlayerShuffleOff"]
 					  forState:UIControlStateNormal];
 		[shuffleButton addTarget:self action:@selector(toggleShuffle) forControlEvents:UIControlEventTouchUpInside];
 		[overlayView addSubview:shuffleButton];
@@ -520,12 +520,12 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	if (shuffle)
 	{
 		shuffle = NO;
-		[shuffleButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerShuffleOff" ofType:@"png"]] forState:UIControlStateNormal];
+		[shuffleButton setImage:[UIImage imageNamed:@"_AudioPlayerShuffleOff"] forState:UIControlStateNormal];
 	}
 	else
 	{
 		shuffle = YES;
-		[shuffleButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerShuffleOn" ofType:@"png"]] forState:UIControlStateNormal];
+		[shuffleButton setImage:[UIImage imageNamed:@"_AudioPlayerShuffleOn"] forState:UIControlStateNormal];
 	}
 	
 	[self updateViewForPlayerInfo:player];
@@ -536,21 +536,21 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
 	if (repeatOne)
 	{
-		[repeatButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerRepeatOff" ofType:@"png"]] 
+		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOff"]
 					  forState:UIControlStateNormal];
 		repeatOne = NO;
 		repeatAll = NO;
 	}
 	else if (repeatAll)
 	{
-		[repeatButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerRepeatOneOn" ofType:@"png"]] 
+		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOneOn"]
 					  forState:UIControlStateNormal];
 		repeatOne = YES;
 		repeatAll = NO;
 	}
 	else
 	{
-		[repeatButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerRepeatOn" ofType:@"png"]] 
+		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOn"]
 					  forState:UIControlStateNormal];
 		repeatOne = NO;
 		repeatAll = YES;
