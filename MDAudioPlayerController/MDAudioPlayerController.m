@@ -332,7 +332,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	previousButton.enabled = [self canGoToPreviousTrack];
 	[self.view addSubview:previousButton];
 	
-	self.volumeSlider = [[UISlider alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - (IS_OS_7_OR_LATER?32:47), 270, 9)];
+	self.volumeSlider = [[UISlider alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - (IS_OS_7_OR_LATER?47:62), 270, 40)];
 	
     if (!IS_OS_7_OR_LATER) {
         [volumeSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerVolumeKnob" ofType:@"png"]]
