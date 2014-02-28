@@ -332,9 +332,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	previousButton.enabled = [self canGoToPreviousTrack];
 	[self.view addSubview:previousButton];
 	
-	self.volumeSlider = [[UISlider alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - (IS_OS_7_OR_LATER?47:62), 270, 40)];
+	self.volumeSlider = [[UISlider alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - 47, 270, 40)];
 	
     if (!IS_OS_7_OR_LATER) {
+        
         [volumeSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerVolumeKnob" ofType:@"png"]]
                            forState:UIControlStateNormal];
         [volumeSlider setMinimumTrackImage:[[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberLeft" ofType:@"png"]] stretchableImageWithLeftCapWidth:5 topCapHeight:3]
@@ -487,7 +488,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		duration.adjustsFontSizeToFitWidth = YES;
 		currentTime.adjustsFontSizeToFitWidth = YES;
 		
-		self.repeatButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 45, 32, 28)];
+		self.repeatButton = [[UIButton alloc] initWithFrame:CGRectMake(10 + 6, 45, 32, 28)];
 		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOff"]
 					  forState:UIControlStateNormal];
 		[repeatButton addTarget:self action:@selector(toggleRepeat) forControlEvents:UIControlEventTouchUpInside];
