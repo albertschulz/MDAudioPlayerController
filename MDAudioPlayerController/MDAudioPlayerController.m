@@ -88,9 +88,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 
 - (void)updateViewForPlayerState:(AVAudioPlayer *)p
 {
-	titleLabel.text = [[soundFiles objectAtIndex:selectedIndex] title];
-	artistLabel.text = [[soundFiles objectAtIndex:selectedIndex] artist];
-	albumLabel.text = [[soundFiles objectAtIndex:selectedIndex] album];
+	titleLabel.text = [[[soundFiles objectAtIndex:selectedIndex] title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	artistLabel.text = [[[soundFiles objectAtIndex:selectedIndex] artist] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	albumLabel.text = [[[soundFiles objectAtIndex:selectedIndex] album] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	
 	[self updateCurrentTimeForPlayer:p];
 	
@@ -796,7 +796,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		cell = [[MDAudioPlayerTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 	}
 	
-	cell.title = [[soundFiles objectAtIndex:indexPath.row] title];
+	cell.title = [[[soundFiles objectAtIndex:indexPath.row] title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	cell.number = [NSString stringWithFormat:@"%d.", (indexPath.row + 1)];
 	cell.duration = [[soundFiles objectAtIndex:indexPath.row] durationInMinutes];
 
