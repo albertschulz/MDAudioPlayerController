@@ -60,7 +60,7 @@ static UIFont *textFont = nil;
 
 - (void)setTitle:(NSString *)s
 {
-    title = s;
+    title = [s stringByRemovingPercentEncoding];
 	[self setNeedsDisplay]; 
 }
 
