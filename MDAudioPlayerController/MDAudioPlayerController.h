@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 #import <QuartzCore/QuartzCore.h>
 #import "MDAudioFile.h"
 
@@ -39,7 +40,7 @@
 	UILabel				*artistLabel;
 	UILabel				*albumLabel;
 	UILabel				*indexLabel;
-	UISlider			*volumeSlider;
+	MPVolumeView		*volumeSlider;
 	UISlider			*progressSlider;
 	
 	UITableView			*songTableView;
@@ -80,7 +81,7 @@
 @property (nonatomic, strong) UILabel *artistLabel;
 @property (nonatomic, strong) UILabel *albumLabel;
 
-@property (nonatomic, strong) UISlider *volumeSlider;
+@property (nonatomic, strong) MPVolumeView *volumeSlider;
 @property (nonatomic, strong) UISlider *progressSlider;
 
 @property (nonatomic, strong) UITableView *songTableView;
