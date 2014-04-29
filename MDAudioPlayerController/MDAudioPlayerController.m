@@ -88,9 +88,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 
 - (void)updateViewForPlayerState:(AVAudioPlayer *)p
 {
-	titleLabel.text = [[[soundFiles objectAtIndex:selectedIndex] title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	artistLabel.text = [[[soundFiles objectAtIndex:selectedIndex] artist] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	albumLabel.text = [[[soundFiles objectAtIndex:selectedIndex] album] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	titleLabel.text = [[[soundFiles objectAtIndex:selectedIndex] title] stringByRemovingPercentEncoding];
+	artistLabel.text = [[[soundFiles objectAtIndex:selectedIndex] artist] stringByRemovingPercentEncoding];
+	albumLabel.text = [[[soundFiles objectAtIndex:selectedIndex] album] stringByRemovingPercentEncoding];
 	
 	[self updateCurrentTimeForPlayer:p];
 	
@@ -109,10 +109,15 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		[self.view addSubview:playButton];
 		updateTimer = nil;
 	}
+    
+    UIImage *artwork = [[soundFiles objectAtIndex:selectedIndex] coverImage];
+    if (!artwork) {
+        artwork = self.noArtworkImage;
+    }
 	
-	if (![songTableView superview]) 
+	if (![songTableView superview])
 	{
-		[artworkView setImage:[[soundFiles objectAtIndex:selectedIndex] coverImage] forState:UIControlStateNormal];
+		[artworkView setImage:artwork forState:UIControlStateNormal];
 		reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
 	}
 	
@@ -127,6 +132,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
                      MPMediaItemPropertyArtist,
                      MPMediaItemPropertyPlaybackDuration,
                      MPNowPlayingInfoPropertyPlaybackRate,
+                     MPMediaItemPropertyArtwork,
                      nil];
     
     NSString *title = @"";
@@ -135,10 +141,13 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     if (self.titleLabel.text) title = self.titleLabel.text;
     if (self.artistLabel.text) artist = self.artistLabel.text;
     
+    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:artwork];
+    
     NSArray *values = @[title,
                         artist,
                         @(p.duration),
-                        @1];
+                        @1,
+                        albumArt];
     NSDictionary *mediaInfo = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:mediaInfo];
 }
@@ -150,22 +159,24 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	progressSlider.maximumValue = p.duration;
 }
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index customNoArtworkImage:(UIImage *)noArtworkImage
 {
-	if (self = [super init]) 
+    if (self = [super init])
 	{
+        _noArtworkImage = noArtworkImage;
+        
         statusBarOffset = 0;
         
 		self.soundFiles = songs;
 		self.soundFilesPath = path;
 		selectedIndex = index;
-				
+        
 		NSError *error = nil;
-				
+        
 		self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:[(MDAudioFile *)[soundFiles objectAtIndex:selectedIndex] filePath] error:&error];
 		[player setNumberOfLoops:0];
 		player.delegate = self;
-				
+        
 		[self updateViewForPlayerInfo:player];
 		[self updateViewForPlayerState:player];
 		
@@ -174,6 +185,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	}
 	
 	return self;
+}
+
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index
+{
+	return [self initWithSoundFiles:songs atPath:path andSelectedIndex:index customNoArtworkImage:nil];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -265,7 +281,13 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-	[artworkView setImage:[selectedSong coverImage] forState:UIControlStateNormal];
+    
+    UIImage *artwork = [selectedSong coverImage];
+    if (!artwork) {
+        artwork = self.noArtworkImage;
+    }
+    
+	[artworkView setImage:artwork forState:UIControlStateNormal];
     self.artworkView.imageView.contentMode = UIViewContentModeScaleAspectFill;
 	[artworkView addTarget:self action:@selector(showOverlayView) forControlEvents:UIControlEventTouchUpInside];
 	artworkView.showsTouchWhenHighlighted = NO;
@@ -392,7 +414,13 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	if ([songTableView superview])
 	{
 		[self.songTableView removeFromSuperview];
-		[self.artworkView setImage:[[soundFiles objectAtIndex:selectedIndex] coverImage] forState:UIControlStateNormal];
+        
+        UIImage *artwork = [[soundFiles objectAtIndex:selectedIndex] coverImage];
+        if (!artwork) {
+            artwork = self.noArtworkImage;
+        }
+        
+		[self.artworkView setImage:artwork forState:UIControlStateNormal];
 		[self.containerView addSubview:reflectionView];
 		
 		[gradientLayer removeFromSuperlayer];
@@ -911,6 +939,27 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
 - (void)dealloc
 {
     
+}
+
+- (UIImage *)noArtworkImage
+{
+    if (_noArtworkImage) {
+        return _noArtworkImage;
+    }
+    else {
+        return self.noArtworkDefaultImage;
+    }
+}
+
+- (UIImage *)noArtworkDefaultImage
+{
+    if (_noArtworkDefaultImage) {
+        return _noArtworkDefaultImage;
+    }
+    else {
+        _noArtworkDefaultImage = [UIImage imageNamed:@"AudioPlayerNoArtwork"];
+        return _noArtworkDefaultImage;
+    }
 }
 
 @end

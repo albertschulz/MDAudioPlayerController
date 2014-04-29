@@ -66,6 +66,9 @@
 
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 
+@property (nonatomic, strong) UIImage *noArtworkImage;
+@property (nonatomic, strong) UIImage *noArtworkDefaultImage;
+
 @property (nonatomic, strong) UIButton *playButton;
 @property (nonatomic, strong) UIButton *pauseButton;
 @property (nonatomic, strong) UIButton *nextButton;
@@ -98,6 +101,7 @@
 @property (nonatomic, assign) BOOL repeatOne;
 @property (nonatomic, assign) BOOL shuffle;
 
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index customNoArtworkImage:(UIImage *)noArtworkImage;
 - (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index;
 - (void)dismissAudioPlayer;
 - (void)showSongFiles;

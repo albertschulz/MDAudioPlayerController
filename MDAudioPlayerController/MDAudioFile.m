@@ -168,7 +168,7 @@
     if (coverImage) {
         return coverImage;
     }
-	return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerNoArtwork" ofType:@"png"]];
+	return nil;
 }
 
 @end
