@@ -163,6 +163,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
     if (self = [super init])
 	{
+        [[NSNotificationCenter defaultCenter] addObserver:self
+               selector:@selector(audioRouteChanged:)
+                   name:AVAudioSessionRouteChangeNotification
+                 object:nil];
+        
         _noArtworkImage = noArtworkImage;
         
         statusBarOffset = 0;
@@ -938,7 +943,7 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
 
 - (void)dealloc
 {
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (UIImage *)noArtworkImage
@@ -960,6 +965,54 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
         _noArtworkDefaultImage = [UIImage imageNamed:@"AudioPlayerNoArtwork"];
         return _noArtworkDefaultImage;
     }
+}
+
+- (void)audioRouteChanged:(NSNotification *)notification
+{
+    NSDictionary *interuptionDict = notification.userInfo;
+    
+    AVAudioSessionRouteDescription *previousRoute = [interuptionDict valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
+    
+    if ([[previousRoute.outputs valueForKeyPath:@"portType"] containsObject:AVAudioSessionPortHeadphones] && self.player.isPlaying) {
+        [self play];
+    }
+    
+//    NSInteger routeChangeReason = [[interuptionDict valueForKey:AVAudioSessionRouteChangeReasonKey] integerValue];
+//    switch (routeChangeReason) {
+//        case AVAudioSessionRouteChangeReasonUnknown:
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonUnknown");
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonNewDeviceAvailable:
+//            // a headset was added or removed
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonNewDeviceAvailable");
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
+//            // a headset was added or removed
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonOldDeviceUnavailable");
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonCategoryChange:
+//            // called at start - also when other audio wants to play
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonCategoryChange");//AVAudioSessionRouteChangeReasonCategoryChange
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonOverride:
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonOverride");
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonWakeFromSleep:
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonWakeFromSleep");
+//            break;
+//            
+//        case AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory:
+//            NSLog(@"routeChangeReason : AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory");
+//            break;
+//            
+//        default:
+//            break;
+//    }
 }
 
 @end
