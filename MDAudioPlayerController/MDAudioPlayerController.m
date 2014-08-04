@@ -63,6 +63,11 @@ static const CGFloat kDefaultReflectionOpacity = 0.40;
 @synthesize shuffle;
 
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
 	MDAudioPlayerController *vc = (__bridge MDAudioPlayerController *)userData;
@@ -195,11 +200,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index
 {
 	return [self initWithSoundFiles:songs atPath:path andSelectedIndex:index customNoArtworkImage:nil];
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 - (void)viewDidLoad
