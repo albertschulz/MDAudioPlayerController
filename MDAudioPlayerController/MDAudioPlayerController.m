@@ -22,7 +22,6 @@
 @implementation MDAudioPlayerController
 
 static const CGFloat kDefaultReflectionFraction = 0.65;
-static const CGFloat kDefaultReflectionOpacity = 0.40;
 
 @synthesize soundFiles;
 @synthesize soundFilesPath;
@@ -211,7 +210,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	self.view.backgroundColor = [UIColor blackColor];
 	
 	if (!IS_OS_7_OR_LATER) [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:YES];
-	
+    
 	updateTimer = nil;
     
     UIView *statusBarBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, statusBarOffset)];
@@ -362,14 +361,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self updateViewForPlayerState:player];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
+        
 	[player play];
     
     if([_delegate respondsToSelector:@selector(audioPlayer:didBeginPlaying:)]) {
