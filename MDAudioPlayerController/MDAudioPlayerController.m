@@ -22,7 +22,6 @@
 @implementation MDAudioPlayerController
 
 static const CGFloat kDefaultReflectionFraction = 0.65;
-static const CGFloat kDefaultReflectionOpacity = 0.40;
 
 @synthesize soundFiles;
 @synthesize soundFilesPath;
@@ -93,9 +92,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 
 - (void)updateViewForPlayerState:(AVAudioPlayer *)p
 {
-	titleLabel.text = [[[soundFiles objectAtIndex:selectedIndex] title] stringByRemovingPercentEncoding];
-	artistLabel.text = [[[soundFiles objectAtIndex:selectedIndex] artist] stringByRemovingPercentEncoding];
-	albumLabel.text = [[[soundFiles objectAtIndex:selectedIndex] album] stringByRemovingPercentEncoding];
+	titleLabel.text = [[[soundFiles objectAtIndex:selectedIndex] title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	artistLabel.text = [[[soundFiles objectAtIndex:selectedIndex] artist] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	albumLabel.text = [[[soundFiles objectAtIndex:selectedIndex] album] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	
 	[self updateCurrentTimeForPlayer:p];
 	
@@ -211,7 +210,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	self.view.backgroundColor = [UIColor blackColor];
 	
 	if (!IS_OS_7_OR_LATER) [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:YES];
-	
+    
 	updateTimer = nil;
     
     UIView *statusBarBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, statusBarOffset)];
@@ -246,7 +245,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	MDAudioFile *selectedSong = [self.soundFiles objectAtIndex:selectedIndex];
 	
 	self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 14 + statusBarOffset, 195, 12)];
-	titleLabel.text = [[selectedSong title] stringByRemovingPercentEncoding];
+	titleLabel.text = [[selectedSong title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	titleLabel.font = [UIFont boldSystemFontOfSize:12];
 	titleLabel.backgroundColor = [UIColor clearColor];
 	titleLabel.textColor = [UIColor whiteColor];
@@ -257,7 +256,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:titleLabel];
 	
 	self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 2 + statusBarOffset, 195, 12)];
-	artistLabel.text = [[selectedSong artist] stringByRemovingPercentEncoding];
+	artistLabel.text = [[selectedSong artist] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	artistLabel.font = [UIFont boldSystemFontOfSize:12];
 	artistLabel.backgroundColor = [UIColor clearColor];
 	artistLabel.textColor = [UIColor lightGrayColor];
@@ -268,7 +267,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:artistLabel];
 	
 	self.albumLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 27 + statusBarOffset, 195, 12)];
-	albumLabel.text = [[selectedSong album] stringByRemovingPercentEncoding];
+	albumLabel.text = [[selectedSong album] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	albumLabel.backgroundColor = [UIColor clearColor];
 	albumLabel.font = [UIFont boldSystemFontOfSize:12];
 	albumLabel.textColor = [UIColor lightGrayColor];
@@ -362,14 +361,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self updateViewForPlayerState:player];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
+        
 	[player play];
     
     if([_delegate respondsToSelector:@selector(audioPlayer:didBeginPlaying:)]) {
