@@ -284,7 +284,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 44 + statusBarOffset, self.view.bounds.size.width, self.view.bounds.size.height - 44)];
 	[self.view addSubview:containerView];
 	
-	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame))];
     
     UIImage *artwork = [selectedSong coverImage];
     if (!artwork) {
@@ -299,18 +299,19 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	artworkView.backgroundColor = [UIColor clearColor];
 	[containerView addSubview:artworkView];
 	
-	self.reflectionView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 96)];
-	reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
-	reflectionView.alpha = kDefaultReflectionFraction;
-	[self.containerView addSubview:reflectionView];
+//	self.reflectionView = [[UIImageView alloc] initWithFrame:CGRectMake(0, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame), 96)];
+//	reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
+//	reflectionView.alpha = kDefaultReflectionFraction;
+//	[self.containerView addSubview:reflectionView];
 	
-	self.songTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 368 + (FOUR_INCH_SCREEN?88:0))];
+	self.songTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 368 + (FOUR_INCH_SCREEN?88:0))];
 	self.songTableView.delegate = self;
 	self.songTableView.dataSource = self;
 	self.songTableView.separatorColor = [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.10];
 	self.songTableView.backgroundColor = [UIColor clearColor];
 	self.songTableView.contentInset = UIEdgeInsetsMake(0, 0, 37, 0); 
 	self.songTableView.showsVerticalScrollIndicator = NO;
+    self.songTableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	gradientLayer = [[CAGradientLayer alloc] init];
 	gradientLayer.frame = CGRectMake(0.0, self.containerView.bounds.size.height - 96, self.containerView.bounds.size.width, 48);
@@ -319,7 +320,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	/*! HACKY WAY OF REMOVING EXTRA SEPERATORS */
 	
-	UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 10)];
+	UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 10)];
 	v.backgroundColor = [UIColor clearColor];
 	[self.songTableView setTableFooterView:v];
 
@@ -338,13 +339,14 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[pauseButton addTarget:self action:@selector(play) forControlEvents:UIControlEventTouchUpInside];
 	pauseButton.showsTouchWhenHighlighted = YES;
 	
-	self.nextButton = [[UIButton alloc] initWithFrame:CGRectMake(220, self.view.bounds.size.height - 90, 40, 40)];
+	self.nextButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.bounds) - 100, self.view.bounds.size.height - 90, 40, 40)];
 	[nextButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerNextTrack" ofType:@"png"]] 
 				forState:UIControlStateNormal];
 	[nextButton addTarget:self action:@selector(next) forControlEvents:UIControlEventTouchUpInside];
 	nextButton.showsTouchWhenHighlighted = YES;
 	nextButton.enabled = [self canGoToNextTrack];
 	[self.view addSubview:nextButton];
+    
 	
 	self.previousButton = [[UIButton alloc] initWithFrame:CGRectMake(60, self.view.bounds.size.height - 90, 40, 40)];
 	[previousButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerPrevTrack" ofType:@"png"]] 
@@ -353,6 +355,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	previousButton.showsTouchWhenHighlighted = YES;
 	previousButton.enabled = [self canGoToPreviousTrack];
 	[self.view addSubview:previousButton];
+    
+    self.playButton.center = CGPointMake(CGRectGetWidth(self.view.bounds) / 2, self.playButton.center.y);
+    self.pauseButton.center = CGPointMake(CGRectGetWidth(self.view.bounds) / 2, self.pauseButton.center.y);
 	
 	self.volumeSlider = [[MPVolumeView alloc] initWithFrame:CGRectMake(25, self.view.bounds.size.height - 40, 270, 40)];
 	[self.view addSubview:volumeSlider];
