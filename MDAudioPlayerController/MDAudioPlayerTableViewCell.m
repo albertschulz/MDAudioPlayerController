@@ -139,27 +139,6 @@ static UIFont *textFont = nil;
     CGFloat durationMarginLeft = width - durationWidth - durationMarginRight;
 	[duration drawInRect:CGRectMake(durationMarginLeft, contentMarginTop, durationWidth, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
 	
-    
-    ////
-    //// Draw Divider
-    ////
-    
-    UIColor *dividerColor = self.highlighted ? [UIColor clearColor] : [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.13];
-	[dividerColor set];
-    
-    CGFloat dividerHeight = 0.5;
-    
-	
-	CGContextSetLineWidth(context, dividerHeight);
-	
-	CGContextMoveToPoint(context, 63.5, 0.0);
-	CGContextAddLineToPoint(context, 63.5, height);
-	
-	CGContextMoveToPoint(context, 260.5, 0.0);
-	CGContextAddLineToPoint(context, 260.5, height);
-	
-	CGContextStrokePath(context);
-	
     ////
     //// Configure Selected Style
     ////
