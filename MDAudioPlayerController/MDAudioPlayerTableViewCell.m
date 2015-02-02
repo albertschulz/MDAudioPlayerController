@@ -100,38 +100,70 @@ static UIFont *textFont = nil;
 - (void)drawContentView:(CGRect)r
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
+    CGFloat width = CGRectGetWidth(self.bounds);
+    CGFloat height = CGRectGetHeight(self.bounds);
 	
+    ////
+    //// Draw Background
+    ////
+    
 	UIColor *bgColor;
 	
 	if (self.highlighted)
 		bgColor = [UIColor blackColor];
 	else
-		bgColor = self.isEven ? [UIColor colorWithWhite:0.0 alpha:0.95] : [UIColor blackColor];
-	
-	UIColor *textColor = [UIColor whiteColor];
-	UIColor *dividerColor = self.highlighted ? [UIColor clearColor] : [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.13];
+        bgColor = self.isEven ? [UIColor colorWithWhite:0.0 alpha:0.95] : [UIColor blackColor];
 	
 	[bgColor set];
 	CGContextFillRect(context, r);
 	
+    
+    
+    ////
+    //// Draw Text
+    ////
+    UIColor *textColor = [UIColor whiteColor];
 	[textColor set];
+    
+    CGFloat titleMarginLeft = 75;
+    CGFloat titleMarginRight = 65;
+    CGFloat contentMarginTop = 12;
+    CGFloat titleWidth = width - titleMarginLeft - titleMarginRight;
 	
-	[title drawInRect:CGRectMake(75, 12, 180, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
-	[number drawInRect:CGRectMake(5, 12, 35, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
-	[duration drawInRect:CGRectMake(255, 12, 55, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
+	[title drawInRect:CGRectMake(titleMarginLeft, contentMarginTop, titleWidth, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
+    
+	[number drawInRect:CGRectMake(5, contentMarginTop, 35, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
+    
+    CGFloat durationWidth = 55;
+    CGFloat durationMarginRight = 10;
+    CGFloat durationMarginLeft = width - durationWidth - durationMarginRight;
+	[duration drawInRect:CGRectMake(durationMarginLeft, contentMarginTop, durationWidth, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
 	
+    
+    ////
+    //// Draw Divider
+    ////
+    
+    UIColor *dividerColor = self.highlighted ? [UIColor clearColor] : [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.13];
 	[dividerColor set];
+    
+    CGFloat dividerHeight = 0.5;
+    
 	
-	CGContextSetLineWidth(context, 0.5);
+	CGContextSetLineWidth(context, dividerHeight);
 	
 	CGContextMoveToPoint(context, 63.5, 0.0);
-	CGContextAddLineToPoint(context, 63.5, r.size.height);
+	CGContextAddLineToPoint(context, 63.5, height);
 	
 	CGContextMoveToPoint(context, 260.5, 0.0);
-	CGContextAddLineToPoint(context, 260.5, r.size.height);
+	CGContextAddLineToPoint(context, 260.5, height);
 	
 	CGContextStrokePath(context);
 	
+    ////
+    //// Configure Selected Style
+    ////
+    
 	if (self.isSelectedIndex)
 	{		
 		[self.highlighted ? [UIColor whiteColor] : [UIColor colorWithRed:0.090 green:0.274 blue:0.873 alpha:1.000] set];
