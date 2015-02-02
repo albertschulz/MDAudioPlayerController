@@ -244,7 +244,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	MDAudioFile *selectedSong = [self.soundFiles objectAtIndex:selectedIndex];
 	
-	self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 14 + statusBarOffset, 195, 12)];
+    CGFloat width = CGRectGetWidth(self.view.bounds);
+    CGFloat labelMarginLeftRight = 60;
+    
+	self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelMarginLeftRight, 14 + statusBarOffset, width - 2*labelMarginLeftRight, 12)];
 	titleLabel.text = [[selectedSong title] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	titleLabel.font = [UIFont boldSystemFontOfSize:12];
 	titleLabel.backgroundColor = [UIColor clearColor];
@@ -255,7 +258,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.view addSubview:titleLabel];
 	
-	self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 2 + statusBarOffset, 195, 12)];
+	self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelMarginLeftRight, 2 + statusBarOffset, width - 2*labelMarginLeftRight, 12)];
 	artistLabel.text = [[selectedSong artist] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	artistLabel.font = [UIFont boldSystemFontOfSize:12];
 	artistLabel.backgroundColor = [UIColor clearColor];
@@ -266,7 +269,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	artistLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.view addSubview:artistLabel];
 	
-	self.albumLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 27 + statusBarOffset, 195, 12)];
+	self.albumLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelMarginLeftRight, 27 + statusBarOffset, width - 2*labelMarginLeftRight, 12)];
 	albumLabel.text = [[selectedSong album] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	albumLabel.backgroundColor = [UIColor clearColor];
 	albumLabel.font = [UIFont boldSystemFontOfSize:12];
@@ -446,12 +449,16 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (void)showOverlayView
 {	
 	if (overlayView == nil) 
-	{		
+	{
 		self.overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 76)];
 		overlayView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.6];
 		overlayView.opaque = NO;
+        
+        CGFloat overlayViewWidth = CGRectGetWidth(self.overlayView.bounds);
 		
-		self.progressSlider = [[UISlider alloc] initWithFrame:CGRectMake(54, 20, 212, 23)];
+        CGFloat sliderMarginLeftRight = 54;
+        
+		self.progressSlider = [[UISlider alloc] initWithFrame:CGRectMake(sliderMarginLeftRight, 20, overlayViewWidth - 2*sliderMarginLeftRight, 23)];
 
         if (!IS_OS_7_OR_LATER) {
             [progressSlider setThumbImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerScrubberKnob" ofType:@"png"]]
@@ -467,8 +474,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		progressSlider.maximumValue = player.duration;
 		progressSlider.minimumValue = 0.0;	
 		[overlayView addSubview:progressSlider];
+        
+        
 		
-		self.indexLabel = [[UILabel alloc] initWithFrame:CGRectMake(128, 2, 64, 21)];
+        CGFloat indexLabelWidth = 64;
+		self.indexLabel = [[UILabel alloc] initWithFrame:CGRectMake( (overlayViewWidth - indexLabelWidth) / 2 , 2, indexLabelWidth, 21)];
 		indexLabel.font = [UIFont boldSystemFontOfSize:12];
 		indexLabel.shadowOffset = CGSizeMake(0, -1);
 		indexLabel.shadowColor = [UIColor blackColor];
@@ -477,7 +487,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		indexLabel.textAlignment = NSTextAlignmentCenter;
 		[overlayView addSubview:indexLabel];
 		
-		self.duration = [[UILabel alloc] initWithFrame:CGRectMake(272, 21, 48, 21)];
+        CGFloat timeLabelWidth = 48;
+		self.duration = [[UILabel alloc] initWithFrame:CGRectMake(overlayViewWidth - timeLabelWidth, 21, timeLabelWidth, 21)];
 		duration.font = [UIFont boldSystemFontOfSize:14];
 		duration.shadowOffset = CGSizeMake(0, -1);
 		duration.shadowColor = [UIColor blackColor];
@@ -485,7 +496,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		duration.textColor = [UIColor whiteColor];
 		[overlayView addSubview:duration];
 		
-		self.currentTime = [[UILabel alloc] initWithFrame:CGRectMake(0, 21, 48, 21)];
+		self.currentTime = [[UILabel alloc] initWithFrame:CGRectMake(0, 21, timeLabelWidth, 21)];
 		currentTime.font = [UIFont boldSystemFontOfSize:14];
 		currentTime.shadowOffset = CGSizeMake(0, -1);
 		currentTime.shadowColor = [UIColor blackColor];
@@ -497,13 +508,16 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		duration.adjustsFontSizeToFitWidth = YES;
 		currentTime.adjustsFontSizeToFitWidth = YES;
 		
-		self.repeatButton = [[UIButton alloc] initWithFrame:CGRectMake(10 + 6, 45, 32, 28)];
+		self.repeatButton = [[UIButton alloc] initWithFrame:CGRectMake(16, 45, 32, 28)];
 		[repeatButton setImage:[UIImage imageNamed:@"_AudioPlayerRepeatOff"]
 					  forState:UIControlStateNormal];
 		[repeatButton addTarget:self action:@selector(toggleRepeat) forControlEvents:UIControlEventTouchUpInside];
 		[overlayView addSubview:repeatButton];
 		
-		self.shuffleButton = [[UIButton alloc] initWithFrame:CGRectMake(280, 45, 32, 28)];
+        CGFloat shuffleButtonMarginRight = 8;
+        CGFloat shuffleButtonWidth = 32;
+        
+		self.shuffleButton = [[UIButton alloc] initWithFrame:CGRectMake(overlayViewWidth - shuffleButtonWidth - shuffleButtonMarginRight, 45, shuffleButtonWidth, 28)];
 		[shuffleButton setImage:[UIImage imageNamed:@"_AudioPlayerShuffleOff"]
 					  forState:UIControlStateNormal];
 		[shuffleButton addTarget:self action:@selector(toggleShuffle) forControlEvents:UIControlEventTouchUpInside];
